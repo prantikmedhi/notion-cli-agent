@@ -15,6 +15,42 @@ It is designed to help AI agents and human operators use the official `ntn` CLI 
 - run and manage Notion Workers
 - diagnose auth / installation state before running commands
 
+## Authentication modes
+
+This repo supports **OAuth/keychain mode first** and **env-var token mode second**.
+
+### OAuth / keychain mode
+Best for:
+- local machine
+- interactive usage
+- normal developer workflow
+
+Use:
+```bash
+ntn login
+```
+
+Headless / remote browser flow:
+```bash
+ntn login --no-browser
+ntn login poll
+```
+
+In this mode, Notion CLI stores workspace credentials in the OS credential store / keychain.
+That means you can run normal `ntn` commands **without exporting `NOTION_API_TOKEN`**.
+
+### Env-var token mode
+Best for:
+- CI/CD
+- unattended jobs
+- containers
+- remote servers without working keychain integration
+
+Use:
+```bash
+export NOTION_API_TOKEN=...
+```
+
 ## Why this repo exists
 
 Notion CLI is useful for coding agents because it gives a terminal-native way to interact with Notion without inventing undocumented APIs.
@@ -66,7 +102,7 @@ Bundled skills:
 Path: `scripts/`
 
 Included:
-- `notion_doctor.py` — checks CLI presence, auth hints, and env readiness
+- `notion_doctor.py` — checks CLI presence, OAuth/keychain hints, auth files, env readiness
 - `notion_command_catalog.mjs` — prints documented command families
 - `notion_json_to_markdown.js` — converts JSON stdin into Markdown-friendly output
 - `install_as_directory_plugin.py` — installs this as a Hermes directory plugin
@@ -84,6 +120,8 @@ Based on the docs read for this project, this repo covers these documented `ntn`
 
 ### Setup and auth
 - `ntn login`
+- `ntn login --no-browser`
+- `ntn login poll`
 - `ntn logout`
 - `ntn doctor`
 - `ntn update`
@@ -215,6 +253,7 @@ Most recent test result during build:
 ## Notes
 
 - The official `ntn` CLI is **not installed** in this machine yet, so runtime calls to live Notion are wrapped and ready, but real Notion operations require the user to install/auth the CLI first.
+- OAuth/keychain mode is supported by design and should be the preferred mode for local interactive use.
 - This repo is intentionally standalone, so it can live on GitHub as its own integration package instead of being buried inside a larger codebase.
 
 ## License

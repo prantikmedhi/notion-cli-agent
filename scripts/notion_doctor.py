@@ -18,5 +18,12 @@ payload = doctor()
 if args.json:
     print(json.dumps(payload, indent=2))
 else:
-    for k, v in payload.items():
-        print(f"{k}: {v}")
+    print(f"plugin: {payload['plugin']}")
+    print(f"ntn_found: {payload['ntn_found']}")
+    print(f"ntn_path: {payload['ntn_path']}")
+    print(f"preferred_auth: {payload['preferred_auth']}")
+    print(f"oauth_keychain_possible: {payload['oauth_keychain_possible']}")
+    print(f"oauth_session_hint: {payload['oauth_session_hint']}")
+    print(f"auth_files: {payload['auth_files']}")
+    print(f"env: {payload['env']}")
+    print(f"catalog_groups: {payload['catalog_groups']}")

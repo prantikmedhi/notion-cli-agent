@@ -18,7 +18,13 @@ CATALOG: dict[str, Any] = {
         "ntn --version",
     ],
     "auth": {
-        "commands": ["ntn login", "ntn logout"],
+        "oauth": [
+            "ntn login",
+            "ntn login --no-browser",
+            "ntn login poll",
+            "ntn doctor",
+            "ntn logout",
+        ],
         "env": [
             "NOTION_API_TOKEN",
             "NOTION_KEYRING",
@@ -85,6 +91,7 @@ DESTRUCTIVE_PATTERNS = {
     ("logout",),
 }
 
+
 @dataclass
 class RunResult:
     ok: bool
@@ -142,7 +149,7 @@ def ensure_allowed(argv: Iterable[str]) -> tuple[bool, str]:
 
 def is_destructive(argv: Iterable[str]) -> bool:
     items = tuple(str(x) for x in argv if str(x).strip())
-    return any(items[:len(pattern)] == pattern for pattern in DESTRUCTIVE_PATTERNS)
+    return any(items[: len(pattern)] == pattern for pattern in DESTRUCTIVE_PATTERNS)
 
 
 def maybe_json(text: str) -> Any:
@@ -157,19 +164,40 @@ def maybe_json(text: str) -> Any:
 
 def doctor() -> dict[str, Any]:
     ntn = find_ntn()
-    env = {k: bool(os.getenv(k)) for k in [
-        "NOTION_API_TOKEN",
-        "NOTION_KEYRING",
-        "NOTION_WORKSPACE_ID",
-        "NOTION_WORKERS_CONFIG_FILE",
-        "NOTION_API_VERSION",
-    ]}
-    auth_file = Path.home() / ".config" / "notion" / "auth.json"
+    env = {
+        k: bool(os.getenv(k))
+        for k in [
+            "NOTION_API_TOKEN",
+            "NOTION_KEYRING",
+            "NOTION_WORKSPACE_ID",
+            "NOTION_WORKERS_CONFIG_FILE",
+            "NOTION_API_VERSION",
+        ]
+    }
+    notion_home = Path(
+        os.getenv("NOTION_HOME")
+        or os.getenv("XDG_CONFIG_HOME", str(Path.home() / ".config")) + "/notion"
+    )
+    if notion_home.name != "notion":
+        notion_home = notion_home / "notion"
+    auth_file = notion_home / "auth.json"
+    config_file = notion_home / "config.json"
+    workspaces_file = notion_home / "workspaces.json"
+    oauth_available = auth_file.exists() or workspaces_file.exists() or config_file.exists()
+    preferred_auth = "oauth/keychain" if oauth_available else "env-var or login required"
     return {
         "plugin": PLUGIN_NAME,
         "ntn_found": bool(ntn),
         "ntn_path": ntn,
-        "auth_file_exists": auth_file.exists(),
+        "oauth_keychain_possible": True,
+        "oauth_session_hint": oauth_available,
+        "preferred_auth": preferred_auth,
+        "auth_files": {
+            "auth_json": auth_file.exists(),
+            "config_json": config_file.exists(),
+            "workspaces_json": workspaces_file.exists(),
+            "notion_home": str(notion_home),
+        },
         "env": env,
         "catalog_groups": sorted(CATALOG.keys()),
     }

@@ -7,6 +7,11 @@ def test_catalog_has_core_groups():
         assert key in helpers.CATALOG
 
 
+def test_oauth_auth_catalog_present():
+    assert "oauth" in helpers.CATALOG["auth"]
+    assert "ntn login" in helpers.CATALOG["auth"]["oauth"]
+
+
 def test_ensure_allowed_rejects_unknown_top_level():
     ok, reason = helpers.ensure_allowed(["rm", "-rf", "/"])
     assert ok is False
@@ -29,3 +34,6 @@ def test_doctor_shape():
     assert payload["plugin"] == "notion-cli-agent"
     assert "ntn_found" in payload
     assert "catalog_groups" in payload
+    assert "preferred_auth" in payload
+    assert "oauth_keychain_possible" in payload
+    assert "auth_files" in payload

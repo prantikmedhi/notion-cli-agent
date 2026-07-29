@@ -24,7 +24,7 @@ cd notion-cli-agent
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -U pip
-python3 -m pip install -e .
+/Users/prantikpratimmedhi/.hermes/hermes-agent/venv/bin/python -m pip install -e .
 hermes plugins enable notion-cli-agent
 ntn login
 ```
@@ -36,7 +36,8 @@ cd notion-cli-agent
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -U pip
-python3 -m pip install -e .
+# use the Hermes Python, not just your shell Python
+~/.hermes/hermes-agent/venv/bin/python -m pip install -e .
 hermes plugins enable notion-cli-agent
 ntn login
 ```
@@ -48,7 +49,8 @@ cd notion-cli-agent
 py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -U pip
-python -m pip install -e .
+# install into the same Python Hermes uses
+$env:HERMES_HOME\hermes-agent\venv\Scripts\python.exe -m pip install -e .
 hermes plugins enable notion-cli-agent
 ntn login
 ```
@@ -249,17 +251,23 @@ cd notion-cli-agent
 ```
 
 #### 2. Install the Python package
-If your Python allows direct install:
+Best for Hermes entry-point plugin detection:
+```bash
+/Users/prantikpratimmedhi/.hermes/hermes-agent/venv/bin/python -m pip install -e .
+```
+
+If your Python allows direct install and you only want the local package available outside Hermes:
 ```bash
 python3 -m pip install -e .
 ```
 
-If your Python is externally managed, use a virtualenv:
+If your Python is externally managed, use a virtualenv for local dev, but still install the plugin into the Hermes Python so `hermes plugins` can see it:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -U pip
 python3 -m pip install -e .
+/Users/prantikpratimmedhi/.hermes/hermes-agent/venv/bin/python -m pip install -e .
 ```
 
 #### 3. Enable in Hermes
@@ -302,15 +310,21 @@ cd notion-cli-agent
 ```
 
 #### 2. Install the Python package
-Recommended:
+Recommended for Hermes plugin detection:
+```bash
+~/.hermes/hermes-agent/venv/bin/python -m pip install -e .
+```
+
+For local development, you can also keep a project venv:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -U pip
 python3 -m pip install -e .
+~/.hermes/hermes-agent/venv/bin/python -m pip install -e .
 ```
 
-If your system Python allows it, direct install also works:
+If your system Python allows it, direct install also works for non-Hermes use:
 ```bash
 python3 -m pip install -e .
 ```
@@ -374,13 +388,18 @@ python -m pip install -U pip
 python -m pip install -e .
 ```
 
-#### 3. Enable in Hermes
+#### 3. Install into the same Python Hermes uses
+```powershell
+$env:HERMES_HOME\hermes-agent\venv\Scripts\python.exe -m pip install -e .
+```
+
+#### 4. Enable in Hermes
 ```powershell
 hermes plugins enable notion-cli-agent
 hermes plugins list
 ```
 
-#### 4. Authenticate
+#### 5. Authenticate
 If `ntn` works natively:
 ```powershell
 ntn login

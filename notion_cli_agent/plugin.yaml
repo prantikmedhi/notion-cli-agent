@@ -1,0 +1,14 @@
+name: notion-cli-agent
+version: 0.1.0
+description: "Standalone Notion CLI plugin for Hermes. Wraps documented ntn commands for API requests, pages, data sources, files, and Workers, and bundles reusable Notion CLI skills for AI agents."
+author: Prantik + Hermes Agent
+kind: standalone
+provides_tools:
+  - notion_cli_help
+  - notion_cli_run
+  - notion_pages_markdown
+  - notion_datasources
+  - notion_files
+  - notion_workers
+provides_hooks:
+  - post_tool_call

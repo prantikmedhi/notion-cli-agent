@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "notion-cli-agent"
+version = "0.1.0"
+description = "Standalone Hermes plugin and skill pack for Notion CLI"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Prantik + Hermes Agent" }
+]
+license = { text = "MIT" }
+dependencies = []
+
+[project.entry-points."hermes_agent.plugins"]
+notion-cli-agent = "notion_cli_agent"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["notion_cli_agent*"]
+exclude = ["tests*"]
+
+[tool.setuptools.package-data]
+notion_cli_agent = [
+  "plugin.yaml",
+  "skills/*/SKILL.md",
+  "skills/*/references/*.md",
+  "skills/*/scripts/*"
+]

@@ -15,6 +15,56 @@ It is designed to help AI agents and human operators use the official `ntn` CLI 
 - run and manage Notion Workers
 - diagnose auth / installation state before running commands
 
+## Quick install
+
+### macOS
+```bash
+git clone https://github.com/prantikmedhi/notion-cli-agent.git
+cd notion-cli-agent
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -U pip
+python3 -m pip install -e .
+hermes plugins enable notion-cli-agent
+ntn login
+```
+
+### Linux
+```bash
+git clone https://github.com/prantikmedhi/notion-cli-agent.git
+cd notion-cli-agent
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -U pip
+python3 -m pip install -e .
+hermes plugins enable notion-cli-agent
+ntn login
+```
+
+### Windows (PowerShell)
+```powershell
+git clone https://github.com/prantikmedhi/notion-cli-agent.git
+cd notion-cli-agent
+py -3 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -U pip
+python -m pip install -e .
+hermes plugins enable notion-cli-agent
+ntn login
+```
+
+Headless OAuth flow:
+```bash
+ntn login --no-browser
+ntn login poll
+```
+
+Verify:
+```bash
+python3 -m pytest -q
+python3 scripts/notion_doctor.py --json
+```
+
 ## Authentication modes
 
 This repo supports **OAuth/keychain mode first** and **env-var token mode second**.

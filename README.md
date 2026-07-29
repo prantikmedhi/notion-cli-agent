@@ -182,30 +182,195 @@ Blocked by default unless explicit confirmation is passed:
 
 That means agents can use the plugin safely for most read/write tasks without casually deleting data or clearing auth state.
 
-## Install and use
+## Install process
 
-## Install as editable Python package
+### macOS
+
+#### Requirements
+- Python 3.10+
+- Git
+- Hermes Agent installed if you want Hermes plugin usage
+- optional: Node.js if you want to run the JS/MJS helper scripts
+
+#### 1. Clone the repo
 ```bash
-cd notion_cli_agent_plugin
+git clone https://github.com/prantikmedhi/notion-cli-agent.git
+cd notion-cli-agent
+```
+
+#### 2. Install the Python package
+If your Python allows direct install:
+```bash
 python3 -m pip install -e .
 ```
 
-## Enable in Hermes
+If your Python is externally managed, use a virtualenv:
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -U pip
+python3 -m pip install -e .
+```
+
+#### 3. Enable in Hermes
 ```bash
 hermes plugins enable notion-cli-agent
 hermes plugins list
 ```
 
-## Use as directory plugin instead
+#### 4. Authenticate Notion CLI with OAuth/keychain
+```bash
+ntn login
+```
+
+Headless fallback:
+```bash
+ntn login --no-browser
+ntn login poll
+```
+
+#### 5. Verify
+```bash
+python3 -m pytest -q
+python3 scripts/notion_doctor.py --json
+node scripts/notion_command_catalog.mjs --json
+```
+
+### Linux
+
+#### Requirements
+- Python 3.10+
+- Git
+- Hermes Agent installed if you want Hermes plugin usage
+- optional: Node.js if you want JS/MJS helper scripts
+- optional: working keychain/secret service if you want pure OAuth/keychain storage
+
+#### 1. Clone the repo
+```bash
+git clone https://github.com/prantikmedhi/notion-cli-agent.git
+cd notion-cli-agent
+```
+
+#### 2. Install the Python package
+Recommended:
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -U pip
+python3 -m pip install -e .
+```
+
+If your system Python allows it, direct install also works:
+```bash
+python3 -m pip install -e .
+```
+
+#### 3. Enable in Hermes
+```bash
+hermes plugins enable notion-cli-agent
+hermes plugins list
+```
+
+#### 4. Authenticate Notion CLI
+Local desktop Linux:
+```bash
+ntn login
+```
+
+Remote/headless Linux:
+```bash
+ntn login --no-browser
+ntn login poll
+```
+
+If your Linux machine has no usable keychain, use token mode instead:
+```bash
+export NOTION_API_TOKEN=...
+```
+
+#### 5. Verify
+```bash
+python3 -m pytest -q
+python3 scripts/notion_doctor.py --json
+node scripts/notion_command_catalog.mjs --json
+```
+
+### Windows
+
+#### Requirements
+- Python 3.10+
+- Git for Windows
+- Hermes Agent installed if you want Hermes plugin usage
+- optional: Node.js if you want JS/MJS helper scripts
+- PowerShell recommended
+
+#### Important note
+This repo installs on Windows, but the official Notion CLI may not have the same native support maturity as macOS/Linux. If native `ntn` usage is unavailable, use:
+- WSL for `ntn`
+- or install the plugin/scripts on Windows and run Notion CLI from a supported environment
+
+#### 1. Clone the repo
+PowerShell:
+```powershell
+git clone https://github.com/prantikmedhi/notion-cli-agent.git
+cd notion-cli-agent
+```
+
+#### 2. Create and activate virtualenv
+```powershell
+py -3 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -U pip
+python -m pip install -e .
+```
+
+#### 3. Enable in Hermes
+```powershell
+hermes plugins enable notion-cli-agent
+hermes plugins list
+```
+
+#### 4. Authenticate
+If `ntn` works natively:
+```powershell
+ntn login
+```
+
+If you are using WSL or a remote environment:
+```bash
+ntn login --no-browser
+ntn login poll
+```
+
+#### 5. Verify
+```powershell
+python -m pytest -q
+python scripts/notion_doctor.py --json
+node scripts/notion_command_catalog.mjs --json
+```
+
+## Alternative: install as Hermes directory plugin
+This works on macOS, Linux, and Windows once Python is available.
+
 ```bash
 python3 scripts/install_as_directory_plugin.py
 hermes plugins enable notion-cli-agent
 ```
 
+Windows PowerShell:
+```powershell
+python scripts/install_as_directory_plugin.py
+hermes plugins enable notion-cli-agent
+```
+
 ## Run tests
 ```bash
-cd notion_cli_agent_plugin
 python3 -m pytest -q
+```
+
+Windows PowerShell:
+```powershell
+python -m pytest -q
 ```
 
 ## Run helper scripts
@@ -218,7 +383,7 @@ node scripts/notion_json_to_markdown.js < sample.json
 ## Repo structure
 
 ```text
-notion_cli_agent_plugin/
+notion-cli-agent/
 ├── README.md
 ├── pyproject.toml
 ├── .gitignore
@@ -248,7 +413,7 @@ Verified in local execution environment:
 - `node scripts/notion_json_to_markdown.js` ✅
 
 Most recent test result during build:
-- `16 passed`
+- `17 passed`
 
 ## Notes
 
